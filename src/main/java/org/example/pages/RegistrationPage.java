@@ -1,9 +1,6 @@
 package org.example.pages;
 
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -13,7 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class RegistrationPage {
-    protected static WebDriver driver;
+    protected  WebDriver driver;
 
     @FindBy(name = "first_name")
     private WebElement elementFirstName;
@@ -60,14 +57,10 @@ public class RegistrationPage {
     @FindBy(className = "form_validation_error")
     private WebElement elementValidateError;
 
+    @FindBy(linkText = "Registration Form")
+    private WebElement elementTitle;
 
-    public RegistrationPage(WebDriver driver) {
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
-    }
-
-
-    public void registerUser(String firstName, String lastName,
+    public void fillRegistrationForm(String firstName, String lastName,
                                   String address, String city, String postCode,  String country,
                                   String state, String phone,String email, String accountType,
                                   String username, String password) {
@@ -76,22 +69,27 @@ public class RegistrationPage {
         elementAddress.sendKeys(address);
         elementCity.sendKeys(city);
         elementPostCode.sendKeys(postCode);
-        Select selectCountry = new Select(elementCountry);
-        selectCountry.selectByValue(country);
         elementState.sendKeys(state);
         elementPhone.sendKeys(phone);
         elementEmail.sendKeys(email);
         elementUsername.sendKeys(username);
         elementPassword.sendKeys(password);
+
         if ("personal".equalsIgnoreCase(accountType)) {
             elementPersonalAccountType.click();
         } else if ("business".equalsIgnoreCase(accountType)) {
             elementBusinessAccountType.click();
         }
+
+        Select selectCountry = new Select(elementCountry);
+        if(!selectCountry.getAllSelectedOptions().contains(country)){
+            country = "UA";
+        }
+        selectCountry.selectByValue(country);
     }
 
     public String getUsernameFieldBorderColor() {
-        return elementUsername.getCssValue("border-color");
+        return elementValidateError.getCssValue("border-color");
     }
 
     public MainPage createValidUser(String firstName, String lastName,
@@ -99,7 +97,7 @@ public class RegistrationPage {
                                     String state, String phone,String email, String accountType,
                                     String username, String password){
 
-        registerUser(firstName, lastName, address, city,  postCode,  country,
+        fillRegistrationForm(firstName, lastName, address, city,  postCode,  country,
                 state,  phone,email, accountType, username, password);
         elementSubmit.click();
 
@@ -110,23 +108,30 @@ public class RegistrationPage {
                                   String address, String city, String postCode,  String country,
                                   String state, String phone,String email, String accountType,
                                   String username, String password) throws InterruptedException {
-        registerUser(firstName, lastName, address, city,  postCode,  country,
+        fillRegistrationForm(firstName, lastName, address, city,  postCode,  country,
                 state,  phone,email, accountType, username, password);
         elementSubmit.click();
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
-
-        // Очікування помилки
+    }
+    public boolean isErrorPresent() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOf(elementValidateError));
+        WebElement errorElement = wait.until(ExpectedConditions.visibilityOf(elementValidateError));
+        return errorElement.isDisplayed();
     }
-    public boolean isValidateErrorPresent() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10)); // Очікування до 10 секунд
-        try {
-            wait.until(ExpectedConditions.visibilityOf(elementValidateError));
-            return true;
-        } catch (TimeoutException e) {
-            return false;
+
+    public void acceptAlert() {
+        Alert alert = driver.switchTo().alert();
+        alert.accept();
+    }
+
+    public boolean isPageOpened() {
+        return elementTitle.isDisplayed();
+    }
+    public RegistrationPage(WebDriver driver) {
+        this.driver = driver;
+        if (!isPageOpened()) {
+            throw new IllegalStateException("This is not the Registration Page, current page is: " + driver.getCurrentUrl());
         }
+        PageFactory.initElements(driver, this);
     }
+
 }

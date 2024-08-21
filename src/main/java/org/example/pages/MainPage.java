@@ -3,21 +3,21 @@ package org.example.pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 
 public class MainPage {
-    protected static WebDriver driver;
-    private By titleBy = By.linkText("Manage Account");
+    protected WebDriver driver;
+    @FindBy(linkText = "Manage Account")
+    private WebElement elementTitle;
 
-    public MainPage(WebDriver driver){
+    public MainPage(WebDriver driver) {
         this.driver = driver;
         if (!isPageOpened()) {
-            throw new IllegalStateException("This is not the Main Page," +
-                    " current page is: " + driver.getCurrentUrl());
+            throw new IllegalStateException("This is not the Main Page, current page is: " + driver.getCurrentUrl());
         }
     }
 
     public boolean isPageOpened() {
-        // Check if the "Manage Account" link is present
-        return driver.findElement(titleBy).isDisplayed();
+        return elementTitle.isDisplayed();
     }
 }
