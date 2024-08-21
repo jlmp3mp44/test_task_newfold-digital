@@ -46,7 +46,7 @@ public class EmailSender {
     }
 
     public static void main(String[] args) {
-        sendEmail("meleshko.julya@lll.kpi.ua", "Test Task Report", "Please loof at  the attached TestNG report.", "D:\\java_projects\\untitled1\\allure-report\\index.html");
+        sendEmail("meleshko.julya@lll.kpi.ua", "Test Task Report", "Please look at  the attached TestNG report.", "D:\\java_projects\\untitled1\\allure-report\\index.html");
     }
 }
 
