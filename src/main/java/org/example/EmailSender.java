@@ -21,13 +21,11 @@ public class EmailSender {
         });
 
         try {
-            // Створення повідомлення
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress("julya.meleshko@gmail.com"));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("meleshko.julya@lll.kpi.ua"));
             message.setSubject("Test Email Subject");
 
-            // Додавання тексту та вкладення
             Multipart multipart = new MimeMultipart();
             MimeBodyPart textPart = new MimeBodyPart();
             textPart.setText(body);
@@ -39,7 +37,6 @@ public class EmailSender {
 
             message.setContent(multipart);
 
-            // Надсилання повідомлення
             Transport.send(message);
             System.out.println("Email sent successfully!");
 
@@ -49,8 +46,7 @@ public class EmailSender {
     }
 
     public static void main(String[] args) {
-        sendEmail("meleshko.julya@lll.kpi.ua", "TestNG Report",
-                "Please find the attached TestNG report.", "D:\\java_projects\\untitled1\\allure-report\\index.html");
+        sendEmail("meleshko.julya@lll.kpi.ua", "Test Task Report", "Please loof at  the attached TestNG report.", "D:\\java_projects\\untitled1\\allure-report\\index.html");
     }
 }
 

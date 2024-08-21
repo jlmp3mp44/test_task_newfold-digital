@@ -10,7 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class RegistrationPage {
-    protected  WebDriver driver;
+    protected WebDriver driver;
 
     @FindBy(name = "first_name")
     private WebElement elementFirstName;
@@ -60,10 +60,8 @@ public class RegistrationPage {
     @FindBy(linkText = "Registration Form")
     private WebElement elementTitle;
 
-    public void fillRegistrationForm(String firstName, String lastName,
-                                  String address, String city, String postCode,  String country,
-                                  String state, String phone,String email, String accountType,
-                                  String username, String password) {
+    public void fillRegistrationForm(String firstName, String lastName, String address, String city, String postCode, String country,
+                                     String state, String phone, String email, String accountType, String username, String password) {
         elementFirstName.sendKeys(firstName);
         elementLastName.sendKeys(lastName);
         elementAddress.sendKeys(address);
@@ -82,50 +80,37 @@ public class RegistrationPage {
         }
 
         Select selectCountry = new Select(elementCountry);
-        if(!selectCountry.getAllSelectedOptions().contains(country)){
+        if (!selectCountry.getAllSelectedOptions().contains(country)) {
             country = "UA";
         }
         selectCountry.selectByValue(country);
     }
 
-    public String getUsernameFieldBorderColor() {
-        return elementValidateError.getCssValue("border-color");
-    }
+    public MainPage createValidUser(String firstName, String lastName, String address, String city, String postCode, String country,
+                                    String state, String phone, String email, String accountType, String username, String password) {
 
-    public MainPage createValidUser(String firstName, String lastName,
-                                    String address, String city, String postCode,  String country,
-                                    String state, String phone,String email, String accountType,
-                                    String username, String password){
-
-        fillRegistrationForm(firstName, lastName, address, city,  postCode,  country,
-                state,  phone,email, accountType, username, password);
+        fillRegistrationForm(firstName, lastName, address, city, postCode, country, state, phone, email, accountType, username, password);
         elementSubmit.click();
 
-        return  new MainPage(driver);
+        return new MainPage(driver);
     }
 
-    public void createInvalidUser(String firstName, String lastName,
-                                  String address, String city, String postCode,  String country,
-                                  String state, String phone,String email, String accountType,
-                                  String username, String password) throws InterruptedException {
-        fillRegistrationForm(firstName, lastName, address, city,  postCode,  country,
-                state,  phone,email, accountType, username, password);
+    public void createInvalidUser(String firstName, String lastName, String address, String city, String postCode, String country,
+                                  String state, String phone, String email, String accountType, String username, String password){
+        fillRegistrationForm(firstName, lastName, address, city, postCode, country, state, phone, email, accountType, username, password);
         elementSubmit.click();
     }
+
     public boolean isErrorPresent() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         WebElement errorElement = wait.until(ExpectedConditions.visibilityOf(elementValidateError));
         return errorElement.isDisplayed();
     }
 
-    public void acceptAlert() {
-        Alert alert = driver.switchTo().alert();
-        alert.accept();
-    }
-
     public boolean isPageOpened() {
         return elementTitle.isDisplayed();
     }
+
     public RegistrationPage(WebDriver driver) {
         this.driver = driver;
         if (!isPageOpened()) {

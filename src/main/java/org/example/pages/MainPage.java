@@ -7,6 +7,7 @@ import org.openqa.selenium.support.FindBy;
 
 public class MainPage {
     protected WebDriver driver;
+
     @FindBy(linkText = "Manage Account")
     private WebElement elementTitle;
 
